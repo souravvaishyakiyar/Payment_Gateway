@@ -1,17 +1,26 @@
 import express from 'express';
 import { config } from 'dotenv';
 import Razorpay from 'razorpay';
-import paymentRoute from './Routes/PaymentRoutes.js'
+ import paymentRoute from './Routes/PaymentRoutes.js'
 import cors from "cors";
+import mongoose from 'mongoose';
+//  import { paymentVerification } from './controllers/paymentController.js';
 
 
 config({ path: "./config/config.env" });
 
+mongoose.connect("mongodb://localhost:27017/raozr").then(()=>{
+   console.log("Connected to mongodb");
+})
+.catch((err)=>{
+   console.log(err);
+})
+export const app=express();
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const app=express();
- app.use(express.json());
 
- app.use(cors);
 
 
  export const instance = new Razorpay({
@@ -25,5 +34,10 @@ const app=express();
  })
 
 
- app.use('/api',paymentRoute)
+  app.use('/api',paymentRoute)
+ 
+
+  app.get("/api/getkey", (req, res) =>
+   res.status(200).json({ key:"rzp_test_plW8eNrF7iScc3"})
+ );
 
